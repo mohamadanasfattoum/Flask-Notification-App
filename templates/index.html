@@ -14,7 +14,7 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <span class="badge bg-primary">0</span>
+                        <span  class="badge bg-primary" id="notification-count">0</span>
                         
                     </li>
                 </ul>
@@ -22,9 +22,41 @@
         </div>
     </nav>
     <div class="container my-4">
-
+      <h3>Send Notification Form</h3>
+      <form id="notificationForm">
+        <div class="mb-3">
+          <input type="text" id="messageInput" class="form-control" placeholder="enter notification message">
+        </div>
+        <button type="submit" class="btn btn-primary">Send Notification</button>
+      </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+    <script>
+      // connect to ws
+      const socket = io()
+
+      // form submissiob
+      document.getElementById('notificationForm').addEventListener('submit',function(e){
+        e.preventDefault() // stop refresh
+        const message = document.getElementById('messageInput').value; // get message
+
+        socket.emit('send_notification',message)  // event name , send message to ws send_notification event
+
+        document.getElementById('messageInput').value = '';
+      })
+
+      // hndel new notification
+      socket.on('new_notification',function(data){
+
+          // update Count
+          const notificationCount = document.getElementById('notification-count')
+          let count = parseInt(notificationCount.textContent)
+          notificationCount.textContent = count + 1
+          
+
+      })
+    </script>
   </body>
 </html>
